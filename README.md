@@ -80,7 +80,8 @@ wrap it in the translation function with the given locale
 
 `N` is int, `S` and `Plural` are binaries or strings. You can use other types, even callables, they will be translated
 in runtime if the strings which they return are marked for translation somewhere else (otherwise epo won't be 
-able to scan them).
+able to scan them). If locale is not supplied it will be extracted from the process dictionary with
+the `erlang:get(locale)` call.
 
 Everywhere instead of `S` you can use tuple `{Context, S}` - this would allow you to translate the same strings in the
 different contexts, resulting in different translations.
