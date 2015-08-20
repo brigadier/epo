@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>
+    <style>
+        td {padding: 5px; border: 1px solid gray;}
+        table {border-collapse: collapse; border-spacing: 0;}
+    </style>
+</head>
+<body>
+
+<h2>Select language</h2>
+<select id="id_locale" name="locale" style="margin-bottom: 20px;" onchange="locale();">
+    <option value="en" {% if lang == "en" %}selected{% endif %}>en(default, not translated)</option>
+    <option value="es" {% if lang == "es" %}selected{% endif %}>es</option>
+    <option value="es_AR" {% if lang == "es_AR" %}selected{% endif %}>es_AR - not translated, defaults to es</option>
+    <option value="ru" {% if lang == "ru" %}selected{% endif %}>ru</option>
+</select>
+
+<h2>Simple trans tag</h2>
+{% trans "Hello" %}<br/>
+<hr/>
+<h2>Show already translated data</h2>
+<table>
+    {% for elem in s1 %}
+        <tr>
+            <td>{{ elem.1 }}</td>
+            <td>{{ elem.2 }}</td>
+            <td>{{ elem.3 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<hr/>
+
+<h2>Translate vars</h2>
+<table>
+    {% for elem in s2 %}
+        <tr>
+            <td>{% trans elem %}</td>
+        </tr>
+    {% endfor %}
+</table>
+<hr/>
+<h2>Blocktrans with plural</h2>
+<table>
+<thead><tr><th>N</th><th>String</th></tr></thead>
+{% for n in nn %}
+    <tr>
+<td>{{ n }}</td><td>{% blocktrans count counter=n %}Hello world!{% plural %}Hello {{ n }} worlds!{% endblocktrans %} <br/></td>
+</tr>
+{% endfor %}
+</table>
+
+
+
+<script>
+    function locale() {
+        window.location.href = ".?lang=" + document.getElementById("id_locale").value;
+    }
+</script>
+
+</body>
+</html>
