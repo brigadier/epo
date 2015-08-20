@@ -2,15 +2,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: example\n"
-"POT-Creation-Date: 2015-08-20 20:03+0300\n"
+"POT-Creation-Date: 2015-08-20 22:08+0300\n"
 "Plural-Forms: nplurals=1; plural=1;\n"
-
-msgid "Hello world!"
-msgid_plural "Hello {{ n }} worlds!"
-msgstr[0] ""
-
-msgid "Hello"
-msgstr ""
 
 msgctxt "fem"
 msgid "cat"
@@ -26,3 +19,15 @@ msgstr ""
 msgid "Hello ~B world!"
 msgid_plural "Hello ~B worlds!"
 msgstr[0] ""
+
+msgctxt "second"
+msgid "Hello world!"
+msgid_plural "Hello {{ n }} worlds!"
+msgstr[0] ""
+
+msgid "Hello world!"
+msgid_plural "Hello {{ n }} worlds!"
+msgstr[0] ""
+
+msgid "Hello"
+msgstr ""

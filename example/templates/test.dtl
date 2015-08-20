@@ -52,7 +52,15 @@
 {% endfor %}
 </table>
 
-
+<h2>Blocktrans with plural and context</h2>
+<table>
+<thead><tr><th>N</th><th>String</th></tr></thead>
+{% for n in nn %}
+    <tr>
+<td>{{ n }}</td><td>{% blocktrans count counter=n context "second" %}Hello world!{% plural %}Hello {{ n }} worlds!{% endblocktrans %} <br/></td>
+</tr>
+{% endfor %}
+</table>
 
 <script>
     function locale() {
