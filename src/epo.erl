@@ -100,7 +100,7 @@ compile(_Args) ->
 
 
 detect_app() ->
-	[AppSrc] = filelib:wildcard("src/*.app.src"),
+	[AppSrc|_] = filelib:wildcard("{src,ebin}/*.{app.src,app}"),
 	{ok, [{_, App, _}]} = file:consult(AppSrc),
 	BiNApp = erlang:atom_to_binary(App, latin1),
 	io:format(<<"Found app: ~s~n">>, [App]),
