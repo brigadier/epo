@@ -10,6 +10,9 @@ erl() ->
 <<"%% -*- coding: utf-8 -*-
 -module(template).
 -compile(nowarn_unused_vars).
+-compile(nowarn_unused_function).
+-compile(nowarn_unused_record).
+
 -record(porec2, {msgstr, msgstr_n = {}, n_max}).
 -export([get_record/2, get_idx/2]).
 ">>
