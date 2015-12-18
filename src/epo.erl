@@ -68,7 +68,7 @@ scan_src([{dtl, F} | SrcFiles], Acc) ->
 	scan_src(SrcFiles, join_strings(Acc, Data)).
 
 join_strings(L1, L2) ->
-	lists:keymerge(2, L1, L2).
+	lists:ukeymerge(2, L1, lists:keysort(2, L2)).
 
 init_locales(App, Locales, SrcFiles, Templates) ->
 	{ok, Data} = scan_src([{erl, F} || F <- SrcFiles] ++ [{dtl, T} || T <- Templates]),
