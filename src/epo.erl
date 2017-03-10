@@ -163,7 +163,7 @@ make_src_file(SrcFileName, ModuleName, Data) ->
 	{ok, [Begin, Mid, End]} = read_template_file(),
 	io:format("Opening file \"~s\"~n", [SrcFileName]),
 	ok = check_magic(SrcFileName),
-	{ok, Handle} = file:open(SrcFileName, [binary, write]),
+	{ok, Handle} = file:open(SrcFileName, [binary, write, {encoding, utf8}]),
 	ok = mark_magic(Handle),
 	ok = dump(fix_module_name(Begin, ModuleName), Handle),
 	ok = dump_nlookup(Data, Handle),
