@@ -1,0 +1,19 @@
+{application, example,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { example_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    cowboy,
+    erlydtl,
+    epo_runtime
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.

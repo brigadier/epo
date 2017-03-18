@@ -25,10 +25,16 @@ This app contains some code from the following apps:
  [https://github.com/erlydtl/erlydtl/](https://github.com/erlydtl/erlydtl/) - parsing of erlydtl templates
  [https://github.com/seriyps/gettexter](https://github.com/seriyps/gettexter) - parsing of the gettext 
  `Plural-forms` directive.
+
+
+* Use with caution - at the moment it translates string  lists to
+lists of the unicode codepoints, which can't be used in any
+iolist-related functions. Do `unicode:characters_to_binary` before
+passing such lists to any i/o.
  
 =========================
  
-### Building
+### Build
 
 To build Epo, run
     
@@ -95,19 +101,21 @@ Epo does not support Erlang string escape sequences besides `\t`, `\n`, `\"`. Ma
 
 
 ### Example app
-
-cd into `example` directory, make sure you have Erlang 18.0, run `make && _rel/example/bin/example console`,
- navigate to `http://localhost:8080`. 
-Most of the interesting stuff is in `Makefile`, `./src/example_handler.erl` and
- `./templates/test.dtl`.
+cd into `example` directory, make sure you have Erlang 18.0,
+run `./rebar3 erlydtl compile && ./rebar3 release && _build/default/rel/example/bin/example console`,
+ navigate to `http://localhost:8080`.
+Most of the interesting stuff is in `rebar.config`, `./apps/example/src/example_handler.erl` and
+ `./apps/example/priv/templates/test.dtl`.
  
  
  
 ### ToDo
+* Switch for on/off unicode:characters_to_list in string translations.
 * Support for Macros
 * Customization, such as names of input and output files
 * Extraction of comments for translators
 * Autoupdating of .po files without poedit
 * Better escaping
+
 
  
