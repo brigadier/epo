@@ -10,8 +10,7 @@
 header(Locale, App) ->
 	HeaderMsg1 = [
 		<<"">>,
-		iolist_to_binary(io_lib:format(<<"Project-Id-Version: ~s\\n">>, [App])),
-		iolist_to_binary(io_lib:format(<<"POT-Creation-Date: ~s\\n">>, [format_now(calendar:universal_time())]))
+		iolist_to_binary(io_lib:format(<<"Project-Id-Version: ~s\\n">>, [App]))
 	],
 	HeaderMsg = header_with_plural(HeaderMsg1, Locale),
 	#porec{msgid = {undefined, <<"">>}, msgstr = HeaderMsg}.
@@ -53,17 +52,6 @@ plural_rule(Locale) ->
 	end.
 
 
-
-format_now(UniTime) ->
-	{{Y, M, D}, {HH, MM, _SS}} = LocalTime = calendar:universal_time_to_local_time(UniTime),
-	Diff = (calendar:datetime_to_gregorian_seconds(LocalTime) - calendar:datetime_to_gregorian_seconds(UniTime)) div 60,
-	Hours = Diff div 60,
-	Minutes = Diff rem 60,
-	Sign = ssign(Hours),
-	io_lib:format("~4..0B-~2..0B-~2..0B ~2..0B:~2..0B~s~2..0B~2..0B", [Y, M, D, HH, MM, Sign, Hours, Minutes]).
-
-ssign(N) when N >= 0 -> "+";
-ssign(_N) -> "-".
 
 dump(_, _, []) -> ok;
 dump(Handle, NPlurals, [Rec | Data]) ->
