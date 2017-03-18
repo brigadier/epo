@@ -7,24 +7,71 @@
 
 -define(MAXW, 70).
 
-header(Locale, App) ->
+
+
+header(Locale, App, PotCreationDate) ->
 	HeaderMsg1 = [
 		<<"">>,
 		iolist_to_binary(io_lib:format(<<"Project-Id-Version: ~s\\n">>, [App])),
-		iolist_to_binary(io_lib:format(<<"POT-Creation-Date: ~s\\n">>, [format_now(calendar:universal_time())]))
+		iolist_to_binary(PotCreationDate)
 	],
 	HeaderMsg = header_with_plural(HeaderMsg1, Locale),
 	#porec{msgid = {undefined, <<"">>}, msgstr = HeaderMsg}.
 
+header(Locale, App) ->
+	Pod = iolist_to_binary(io_lib:format(<<"POT-Creation-Date: ~s\\n">>, [format_now(calendar:universal_time())])),
+	header(Locale, App, Pod).
 
 create(File, Locale, App, Data) ->
-	ok = filelib:ensure_dir(File),
-	Header = header(Locale, App),
 	NPlurals = nplurals(Locale),
-	{ok, Handle} = file:open(File, [write, binary]),
-	ok = dump(Handle, NPlurals, [Header | Data]),
-	file:close(File),
-	ok.
+	{ok, Body} = body_to_bin(NPlurals, Data),
+
+	%% only create .pot file if it differs from teh existing one.
+	case need_rewrite(File, Locale, NPlurals, App, Body) of
+		true ->
+			ok = filelib:ensure_dir(File),
+			Header = header(Locale, App),
+			{ok, Handle} = file:open(File, [write, binary]),
+			ok = dump_rec(Handle, NPlurals, Header),
+			ok = file:write(Handle, Body),
+			file:close(Handle),
+			ok;
+		false ->
+			ok
+	end.
+
+
+body_to_bin(NPlurals, Data) ->
+	{ok, Handle} = file:open("", [ram, read, write, binary]),
+	ok = dump(Handle, NPlurals, Data),
+	{ok, BinData} = read_to_end(Handle),
+	file:close(Handle),
+	{ok, BinData}.
+
+%% pot
+need_rewrite(File, undefined, NPlurals, App, Body) ->
+	case file:read_file(File) of
+		{ok, OldData} ->
+			case re:run(OldData, "^\"(POT-Creation-Date:\s.*)\"$", [multiline, {capture, all_but_first, binary}]) of
+				{match, OldPCDHeader} ->
+					Header = header(undefined, App, OldPCDHeader),
+					{ok, Handle} = file:open("", [ram, read, write, binary]),
+					ok = dump_rec(Handle, NPlurals, Header),
+					ok = file:write(Handle, Body),
+					{ok, NewData} = read_to_end(Handle),
+					NewData =/= OldData;
+				_ ->
+					true
+			end;
+		_ ->
+			true
+	end;
+
+%% po
+need_rewrite(_File, _Locale, _NPlurals, _App, _Body) ->
+	true.
+
+
 
 header_with_plural(Header, undefined) ->
 	Header ++ [<<"Plural-Forms: nplurals=1; plural=1;\\n">>];
@@ -107,7 +154,7 @@ dump_msgstrs(Handle, NPlurals, _MsgIDPlural, _MsgStr, MsgStrN) ->
 dump_msgstr_n(Handle, N, S) when is_binary(S) ->
 	dump_msgstr_n(Handle, N, split(escape(S), ?MAXW));
 dump_msgstr_n(Handle, N, [S | Continuation]) ->
-	ok = io:fwrite(Handle, <<"msgstr[~B] \"~ts\"\n">>, [N, S]),
+	ok = file:write(Handle, io_lib:format(<<"msgstr[~B] \"~ts\"\n">>, [N, S])),
 	dump_continuation(Handle, Continuation).
 
 
@@ -124,18 +171,18 @@ dump_msgid_plural(_Handle, undefined) -> ok;
 dump_msgid_plural(Handle, MsgIDPlural) when is_binary(MsgIDPlural) ->
 	dump_msgid_plural(Handle, split(escape(MsgIDPlural), ?MAXW));
 dump_msgid_plural(Handle, [MsgIDPlural | Continuation]) ->
-	io:fwrite(Handle, <<"msgid_plural \"~ts\"\n">>, [MsgIDPlural]),
+	ok = file:write(Handle, io_lib:format(<<"msgid_plural \"~ts\"\n">>, [MsgIDPlural])),
 	dump_continuation(Handle, Continuation).
 
 dump_msgid(Handle, MsgID) when is_binary(MsgID) ->
 	dump_msgid(Handle, split(escape(MsgID), ?MAXW));
 dump_msgid(Handle, [MsgID | Continuation]) ->
-	io:fwrite(Handle, <<"msgid \"~ts\"\n">>, [MsgID]),
+	ok = file:write(Handle, io_lib:format(<<"msgid \"~ts\"\n">>, [MsgID])),
 	dump_continuation(Handle, Continuation).
 
 dump_context(_Handle, undefined) -> ok;
 dump_context(Handle, Context) ->
-	io:fwrite(Handle, <<"msgctxt \"~ts\"\n">>, [escape(Context)]).
+	ok = file:write(Handle, io_lib:format(<<"msgctxt \"~ts\"\n">>, [escape(Context)])).
 
 dump_comments(_Handle, undefined) -> ok;
 dump_comments(_Handle, []) -> ok;
@@ -163,3 +210,15 @@ split(List, Left, NMax, Acc) when Left =< NMax ->
 split(List, Left, NMax, Acc) ->
 	{L1, L2} = lists:split(NMax, List),
 	split(L2, Left - NMax, NMax, [unicode:characters_to_binary(L1, utf8) | Acc]).
+
+
+
+read_to_end(Handle) ->
+	{ok, _} = file:position(Handle, 0),
+	read_to_end(Handle, <<>>).
+
+read_to_end(Handle, Acc) ->
+	case file:read(Handle, 65536) of
+		{ok, Data} -> read_to_end(Handle, <<Acc/binary, Data/binary>>);
+		eof -> {ok, Acc}
+	end.
