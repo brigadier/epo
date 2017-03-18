@@ -44,7 +44,7 @@ in this directory. This would create `epo` executable file.
 `-compile({parse_transform, epo_gettext}).` at the top of your .erl files
 * Mark translatable strings with `_` (single underscore) or `__` (double underscore). See below for detailed description.
 * Run `./epo scan [locales]`, for example  `./epo scan es ru` - this command will scan `./src/*` directory
-for .erl files and `./templates/*` directory for .dtl files and create the following files:
+for .erl files and all the directories for .dtl files and create the following files:
     `./src/[appname]_complied_po.erl` - a file which will contain strings lookup table. Think of it as kind of .mo file;
     `./priv/lang/[appname].pot` - a standard gettext translatons template file, to be used by `poedit` or other 
     software;

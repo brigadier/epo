@@ -124,7 +124,7 @@ po_fname(App, Locale) -> io_lib:format("./priv/lang/~s.~s.po", [App, Locale]).
 
 po_wildcard(App) -> io_lib:format("./priv/lang/~s.*.po", [App]).
 
-dtl_wildcard() -> "./templates/**/*.dtl".
+dtl_wildcard() -> "./**/*.dtl".
 src_wildcard() -> "./src/**/*.erl".
 
 module_name(App) -> <<App/binary, "_compiled_po">>.
