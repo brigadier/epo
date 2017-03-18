@@ -15,6 +15,7 @@ erl() ->
 
 -record(porec2, {msgstr, msgstr_n = {}, n_max}).
 -export([get_record/2, get_idx/2]).
+-ignore_xref([get_record/2, get_idx/2]).
 ">>
 	,
 <<"get_idx(N, <<Locale2:2/binary, $_, _/binary>>) ->
