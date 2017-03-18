@@ -58,6 +58,20 @@ for .erl files and all the directories for .dtl files and create the following f
 * Make translation files from the .pot file using `poedit` or other translation software. Save them in the
 `./priv/lang/` directory, name them `[appname].[locale].po`
 * Compile .po files into erlang file with `./epo compile`
+* If you have in the source files of the app any strings (lists, not binaries!) which contain
+ codepoints > 255 - ensure that `erlc` runs with `+{gettext, [appname]_compiled_po, unicode}` argument.
+For example have `{erl_opts, [debug_info, {gettext, example_compiled_po, unicode}]}.` in the rebar.config. The in
+and out strings will be converted from and to unicode, so you won't be able to
+use them im any iolist-related functions and i/o. You'd have to convert all your
+translated strings with `unicode:characters_to_binary`.
+
+* If you don't have in the source files of the app any strings (lists, not binaries!) which contain codepoints > 255 AND
+you don't want to have translated strings as unicode, ensure that `erlc` runs with `+{gettext, [appname]_compiled_po, list}` or
+just with  `+{gettext, [appname]_compiled_po}` argument -
+for example have `{erl_opts, [debug_info, {gettext, example_compiled_po, list}]}.` in the rebar.config. The in
+and out strings will be converted from and to unicode, so you will be able to use them in  iolist-related functions
+and in i/o directly.
+
 * ensure `erlc` runs with `+{gettext, [appname]_compiled_po}` argument - for example for erlang.mk add the
 following row in `Makefile`: `ERLC_OPTS += +'{gettext, [appname]_compiled_po}'`. Don't forget to replace 
 `[appname]` with the actual name of your app.
