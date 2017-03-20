@@ -1,6 +1,6 @@
 {application, epo, [
 	{description, ""},
-	{vsn, "0.1.0"},
+	{vsn, "0.3.0"},
 	{id, "git"},
 	{modules, []},
 	{registered, []},

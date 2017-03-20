@@ -27,10 +27,6 @@ This app contains some code from the following apps:
  `Plural-forms` directive.
 
 
-* Use with caution - at the moment it translates string  lists to
-lists of the unicode codepoints, which can't be used in any
-iolist-related functions. Do `unicode:characters_to_binary` before
-passing such lists to any i/o.
  
 =========================
  
@@ -62,14 +58,14 @@ for .erl files and all the directories for .dtl files and create the following f
  codepoints > 255 - ensure that `erlc` runs with `+{gettext, [appname]_compiled_po, unicode}` argument.
 For example have `{erl_opts, [debug_info, {gettext, example_compiled_po, unicode}]}.` in the rebar.config. The in
 and out strings will be converted from and to unicode, so you won't be able to
-use them im any iolist-related functions and i/o. You'd have to convert all your
+use them in any iolist-related functions and i/o. You'd have to convert all your
 translated strings with `unicode:characters_to_binary`.
 
 * If you don't have in the source files of the app any strings (lists, not binaries!) which contain codepoints > 255 AND
 you don't want to have translated strings as unicode, ensure that `erlc` runs with `+{gettext, [appname]_compiled_po, list}` or
 just with  `+{gettext, [appname]_compiled_po}` argument -
 for example have `{erl_opts, [debug_info, {gettext, example_compiled_po, list}]}.` in the rebar.config. The in
-and out strings will be converted from and to unicode, so you will be able to use them in  iolist-related functions
+and out strings won't be converted from and to unicode, so you will be able to use them in  iolist-related functions
 and in i/o directly.
 
 * ensure `erlc` runs with `+{gettext, [appname]_compiled_po}` argument - for example for erlang.mk add the
@@ -124,7 +120,6 @@ Most of the interesting stuff is in `rebar.config`, `./apps/example/src/example_
  
  
 ### ToDo
-* Switch for on/off unicode:characters_to_list in string translations.
 * Support for Macros
 * Customization, such as names of input and output files
 * Extraction of comments for translators
